@@ -28,12 +28,14 @@ class DatePicker extends Component {
   }
 
   bubbleEvent = (target) => {
-    if (target.classList.contains('DatePicker')) {
-
-    } else if (target.tagName === 'HTML') {
-      this.setState({ showCalendar: false });
-    } else {
-      this.bubbleEvent(target.parentElement);
+    const clickedInput = target.classList.contains('date-picker-input');
+    const clickedCalendar = target.classList.contains('Calendar');
+    if (!clickedInput && !clickedCalendar) {
+      if (target.tagName === 'HTML') {
+        this.setState({ showCalendar: false });
+      } else {
+        this.bubbleEvent(target.parentElement);
+      }
     }
   }
 
@@ -69,11 +71,9 @@ class DatePicker extends Component {
 
   render() {
     return (
-      <div
-        className="DatePicker"
-
-      >
+      <div className="DatePicker">
         <input
+          className="date-picker-input"
           onChange={evt => this.handleChange(evt)}
           onFocus={this.showCalendar}
           placeholder={this.props.placeholder}
