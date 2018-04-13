@@ -1,24 +1,24 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import FontAwesome from 'react-fontawesome';
 
 import '../css/Calendar.css';
 
 const propTypes = {
   calendarMonthIndex: PropTypes.number.isRequired,
   color: PropTypes.string.isRequired,
+  date: PropTypes.objectOf(PropTypes.any),
   handleDateChange: PropTypes.func.isRequired,
   hoverWeek: PropTypes.bool,
   lightHeader: PropTypes.bool,
   moveIndex: PropTypes.func.isRequired,
-  show: PropTypes.bool.isRequired,
   startOfWeek: PropTypes.number,
   style: PropTypes.objectOf(PropTypes.any),
   width: PropTypes.number,
 };
 
 const defaultProps = {
+  date: null,
   hoverWeek: false,
   lightHeader: false,
   startOfWeek: 0,
@@ -53,20 +53,18 @@ class Calendar extends Component {
     const daysLastMonth = moment(dateParam).subtract(1, 'month').daysInMonth();
     const firstDay = moment(new Date(thisYear, thisMonth, 1)).day();
 
+    const calendarDisplay = [];
     const dates = [];
-
-    for (let i = 0; i < daysInMonth; i += 1) {
-      dates[i] = String(i + 1).padStart(2, '0');
-    }
+    const daysByWeek = [];
 
     const week = this.genWeek();
-
     const firstOfMonthIndex = week.findIndex(d => d === firstDay);
     const startOfWeekIndex = week.findIndex(d => d === this.props.startOfWeek);
 
     // num days needed from prior month
     const startBufferLength = firstOfMonthIndex - startOfWeekIndex;
 
+    // min number of boxes to appear on calendar
     const dayDisplayMin = startBufferLength + daysInMonth;
 
     // num days needed for next month
@@ -74,10 +72,14 @@ class Calendar extends Component {
     const endBufferLength = monthRemainder > 0 ?
       7 - (monthRemainder) : 0;
 
+    // total number of boxes to appear on calendar
     const calendarTotal = dayDisplayMin + endBufferLength;
 
     let dayCounter = 0;
-    const calendarDisplay = [];
+
+    for (let i = 0; i < daysInMonth; i += 1) {
+      dates[i] = String(i + 1).padStart(2, '0');
+    }
 
     for (let i = 0; i < calendarTotal; i += 1) {
       const day = {};
@@ -98,10 +100,6 @@ class Calendar extends Component {
       calendarDisplay.push(day);
     }
 
-    const weekCount = calendarDisplay.length / 7;
-    const daysByWeek = [];
-    daysByWeek.length = Math.ceil(weekCount);
-
     calendarDisplay.forEach((day, index) => {
       const weekIndex = Math.floor(index / 7);
       const currentWeek = daysByWeek[weekIndex] ? daysByWeek[weekIndex] : [];
@@ -113,17 +111,29 @@ class Calendar extends Component {
   }
 
   render() {
+    const {
+      calendarMonthIndex,
+      color,
+      date: selectedDate,
+      handleDateChange,
+      hoverWeek,
+      lightHeader,
+      moveIndex,
+      style,
+      width,
+    } = this.props;
+
     // calendar default style
     const defaultStyle = {
       boxShadow: '1px 1px 5px gray',
-      width: this.props.width,
+      width,
     };
 
     // calendar wrapper style merged with props
-    const style = Object.assign({}, defaultStyle, this.props.style);
+    const wrapperStyle = Object.assign({}, defaultStyle, style);
 
     // get the width of each column
-    const colWidth = this.props.width / 7;
+    const colWidth = width / 7;
     // set the width for columns
     const colStyle = {
       boxSizing: 'border-box',
@@ -133,35 +143,33 @@ class Calendar extends Component {
       width: colWidth,
     };
 
-    const className = this.props.show ? 'Calendar' : 'hide';
-
     // get date info
-    const currentDate = moment().add(this.props.calendarMonthIndex, 'months');
+    const currentDate = moment().add(calendarMonthIndex, 'months');
     const year = currentDate.format('YYYY');
     const month = currentDate.format('MMMM');
     const week = this.genWeek();
-    const today = moment().format('YYYY-MMMM-DD');
+    const today = moment().format('YYYY-MM-DD');
     const monthDates = this.genMonthDates(currentDate);
 
     return (
       <div
-        className={className}
-        style={style}
+        className="Calendar"
+        style={wrapperStyle}
       >
         <div
           className="header"
           style={{
-            backgroundColor: this.props.color,
-            color: this.props.lightHeader ? 'white' : 'black',
+            backgroundColor: color,
+            color: lightHeader ? 'white' : 'black',
           }}
         >
           <button
-            onClick={() => this.props.moveIndex(-1)}
+            onClick={() => moveIndex(-1)}
             style={{
               float: 'left',
               fontSize: '20px',
               lineHeight: '14px',
-              color: this.props.lightHeader ? 'white' : 'black',
+              color: lightHeader ? 'white' : 'black',
             }}
           >
             {'<'}
@@ -170,12 +178,12 @@ class Calendar extends Component {
             {`${month} ${year}`}
           </span>
           <button
-            onClick={() => this.props.moveIndex(1)}
+            onClick={() => moveIndex(1)}
             style={{
               float: 'right',
               fontSize: '20px',
               lineHeight: '14px',
-              color: this.props.lightHeader ? 'white' : 'black',
+              color: lightHeader ? 'white' : 'black',
             }}
           >
             {'>'}
@@ -197,19 +205,15 @@ class Calendar extends Component {
           {monthDates.map((weekOfMonth, weekIndex) => (
             <div
               key={weekIndex}
-              className={this.props.hoverWeek ? 'calendar-week hover-week' : 'calendar-week'}
+              className={hoverWeek ? 'calendar-week hover-week' : 'calendar-week'}
             >
               {weekOfMonth.map((day, dayIndex) => {
                 let monthAsNum = currentDate.format('MM');
-                const dateDisplay = `${year}-${monthAsNum}-${day.date}`;
-                const date = moment(dateDisplay).format('YYYY-MMMM-DD');
+                let yearOfDay = year;
 
-                const isToday = date === today;
                 const isCurrentMonth = day.month === 'current';
                 const isPrevMonth = day.month === 'previous';
                 const isNextMonth = day.month === 'next';
-
-                let yearOfDay = year;
 
                 if (monthAsNum === '01' && isPrevMonth) {
                   yearOfDay = String(Number(year) - 1);
@@ -223,11 +227,17 @@ class Calendar extends Component {
                   monthAsNum = String(Number(monthAsNum) + 1).padStart(2, '0');
                 }
 
+                const dateDisplay = `${year}-${monthAsNum}-${day.date}`;
+                const selectedDateDisplay = moment(selectedDate).format('YYYY-MM-DD');
+                const dateValid = JSON.stringify(new Date(dateDisplay)) !== 'null';
+
+                const isSelected = dateDisplay === selectedDateDisplay && dateValid;
+                const isToday = dateDisplay === today;
                 const todayMarker = isToday ?
                   (
                     <span
                       className="today-marker"
-                      style={{ color: this.props.color }}
+                      style={{ color }}
                     >
                       &#9698;
                     </span>
@@ -235,13 +245,19 @@ class Calendar extends Component {
                   : null;
 
                 const dayClassName = isCurrentMonth ? 'current-month' : 'outside-dates';
+                const selectedStyle = isSelected ? {
+                  backgroundColor: color,
+                  color: lightHeader ? 'white' : 'black',
+                } : {};
+
+                const dayStyle = Object.assign({}, colStyle, selectedStyle);
 
                 return (
                   <span
                     key={dayIndex}
                     className={dayClassName}
-                    onClick={() => this.props.handleDateChange(yearOfDay, monthAsNum, day.date)}
-                    style={colStyle}
+                    onClick={() => handleDateChange(yearOfDay, monthAsNum, day.date)}
+                    style={dayStyle}
                   >
                     {day.date} {todayMarker}
                   </span>

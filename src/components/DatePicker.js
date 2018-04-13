@@ -5,18 +5,35 @@ import Calendar from './Calendar';
 
 const propTypes = {
   color: PropTypes.string,
+  date: PropTypes.objectOf(PropTypes.any),
+  errorColor: PropTypes.string,
+  errorMessage: PropTypes.string,
+  forceError: PropTypes.bool,
+  handleDateChange: PropTypes.func.isRequired,
+  hoverWeek: PropTypes.bool,
+  inputStyle: PropTypes.objectOf(PropTypes.any),
+  lightHeader: PropTypes.bool,
   placeholder: PropTypes.string,
+  required: PropTypes.bool,
 };
 
 const defaultProps = {
   color: '#005599',
+  date: null,
+  errorColor: '#ff0000',
+  errorMessage: 'Invalid Date',
+  forceError: false,
+  hoverWeek: false,
+  inputStyle: {},
+  lightHeader: false,
   placeholder: 'Date',
+  required: false,
 };
 
 class DatePicker extends Component {
   state = {
+    activated: false,
     calendarMonthIndex: 0,
-    date: null,
     displayDate: '',
     showCalendar: false,
   };
@@ -34,7 +51,7 @@ class DatePicker extends Component {
     const clickedCalendar = target.classList.contains('Calendar');
     if (!clickedInput && !clickedCalendar) {
       if (target.tagName === 'HTML') {
-        this.setState({ showCalendar: false });
+        this.setState({ activated: true, showCalendar: false });
       } else {
         this.bubbleEvent(target.parentElement);
       }
@@ -47,13 +64,15 @@ class DatePicker extends Component {
   };
 
   handleDateChange = (year, month, day) => {
-    const displayDate = `${year}-${month}-${day}`;
+    const displayDate = `${month}/${day}/${year}`;
     const date = new Date(displayDate);
     this.setState({
+      activated: true,
       calendarMonthIndex: 0,
-      date,
       displayDate,
       showCalendar: false,
+    }, () => {
+      this.props.handleDateChange(date);
     });
   }
 
@@ -67,31 +86,110 @@ class DatePicker extends Component {
     this.setState({ calendarMonthIndex });
   }
 
+  setMonthIndex = () => {
+    const { date } = this.props;
+    if (date) {
+      const month = date.getMonth()
+      const currentMonth = new Date().getMonth();
+      const monthDiff = month - currentMonth;
+      // const monthDiff = moment().diff(moment(date), 'months');
+      return monthDiff;
+    }
+    return 0;
+  }
+
   showCalendar = () => {
-    this.setState({ showCalendar: true });
+    const calendarMonthIndex = this.setMonthIndex();
+    this.setState({
+      calendarMonthIndex,
+      showCalendar: true,
+    });
   }
 
   render() {
-    return (
-      <div className="DatePicker">
-        <input
-          className="date-picker-input"
-          onChange={evt => this.handleChange(evt)}
-          onFocus={this.showCalendar}
-          placeholder={this.props.placeholder}
-          value={this.state.displayDate}
-        />
+    const {
+      color,
+      date,
+      errorColor,
+      errorMessage,
+      forceError,
+      hoverWeek,
+      inputStyle,
+      lightHeader,
+      placeholder,
+      required,
+    } = this.props;
+
+    const {
+      activated,
+      calendarMonthIndex,
+      displayDate,
+      showCalendar,
+    } = this.state;
+
+    const stringDate = JSON.stringify(new Date(displayDate));
+    const error = stringDate === 'null' && activated && required;
+    const hasForceError = stringDate === 'null' && forceError && required;
+    const errorFound = error || hasForceError;
+
+    const errorStyle = {
+      border: `1px solid ${errorColor}`,
+    };
+
+    const errorMessageDisplay =
+      errorFound ? (
+        <span
+          className="error-message"
+          style={{
+            color: errorColor,
+            marginTop: '5px',
+          }}
+        >
+          {errorMessage}
+        </span>
+      ) : null;
+
+    const defaultInputStyle = {
+      border: '1px solid black',
+      borderRadius: 4,
+      outline: 'none',
+      padding: 5,
+    };
+
+    const mergedInputStyle = Object.assign({}, defaultInputStyle, inputStyle);
+    const renderInputStyle = errorFound ?
+      Object.assign({}, mergedInputStyle, errorStyle)
+      : mergedInputStyle;
+
+    const calendar = showCalendar ?
+      (
         <Calendar
-          calendarMonthIndex={this.state.calendarMonthIndex}
-          color={this.props.color}
-          date={this.state.date}
+          calendarMonthIndex={calendarMonthIndex}
+          color={color}
+          date={date}
           handleDateChange={this.handleDateChange}
-          // hoverWeek
-          lightHeader
+          hoverWeek={hoverWeek}
+          lightHeader={lightHeader}
           moveIndex={this.moveIndex}
-          show={this.state.showCalendar}
           startOfWeek={1}
         />
+      )
+      : null;
+
+    return (
+      <div className="DatePicker">
+        <div>
+          <input
+            className="date-picker-input"
+            onChange={evt => this.handleChange(evt)}
+            onFocus={this.showCalendar}
+            style={renderInputStyle}
+            placeholder={placeholder}
+            value={displayDate}
+          />
+          {calendar}
+        </div>
+        {errorMessageDisplay}
       </div>
     );
   }

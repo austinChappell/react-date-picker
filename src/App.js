@@ -1,13 +1,37 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import DatePicker from './components/DatePicker';
 
-const App = () => (
-  <div className="App" style={{ padding: 20 }}>
-    <DatePicker
-      placeholder="Select Date"
-    />
-  </div>
-);
+class App extends Component {
+  state = {
+    date: null,
+  }
+
+  handleDateChange = (date) => {
+    this.setState({ date });
+  }
+
+  render() {
+    return (
+      <div className="App" style={{ padding: 20 }}>
+        <DatePicker
+          // color="#ff0000"
+          date={this.state.date}
+          // errorColor="#00ff00"
+          // errorMessage="This is the error message"
+          // forceError
+          handleDateChange={this.handleDateChange}
+          hoverWeek
+          // inputStyle={{
+          //   padding: 0,
+          // }}
+          lightHeader
+          placeholder="Select Date"
+          required
+        />
+      </div>
+    );
+  }
+}
 
 export default App;
