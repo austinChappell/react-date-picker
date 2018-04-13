@@ -29,7 +29,7 @@ class DatePicker extends Component {
 
   bubbleEvent = (target) => {
     if (target.classList.contains('DatePicker')) {
-      
+
     } else if (target.tagName === 'HTML') {
       this.setState({ showCalendar: false });
     } else {
