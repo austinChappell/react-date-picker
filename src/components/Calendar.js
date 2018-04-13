@@ -128,7 +128,7 @@ class Calendar extends Component {
     const colStyle = {
       boxSizing: 'border-box',
       display: 'inline-block',
-      padding: 5,
+      padding: 10,
       textAlign: 'center',
       width: colWidth,
     };

@@ -16,8 +16,13 @@
   background-color: transparent;
 }
 
+.Calendar .day-header {
+  font-weight: 600;
+}
+
 .Calendar .calendar-dates {
   cursor: pointer;
+  font-weight: 200;
 }
 
 .Calendar .calendar-week.hover-week:hover {
