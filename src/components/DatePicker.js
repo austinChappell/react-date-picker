@@ -4,10 +4,12 @@ import PropTypes from 'prop-types';
 import Calendar from './Calendar';
 
 const propTypes = {
+  color: PropTypes.string,
   placeholder: PropTypes.string,
 };
 
 const defaultProps = {
+  color: '#005599',
   placeholder: 'Date',
 };
 
@@ -81,6 +83,7 @@ class DatePicker extends Component {
         />
         <Calendar
           calendarMonthIndex={this.state.calendarMonthIndex}
+          color={this.props.color}
           date={this.state.date}
           handleDateChange={this.handleDateChange}
           hoverWeek

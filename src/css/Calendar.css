@@ -1,6 +1,8 @@
 .Calendar {
   position: absolute;
   box-sizing: border-box;
+  background-color: white;
+  z-index: 1000;
 }
 
 .Calendar .header {
@@ -40,9 +42,7 @@
 .Calendar .calendar-week .today-marker {
   position: absolute;
   bottom: 0;
-  right: 5px;
-  transform-origin: left;
-  transform: rotate(45deg);
+  right: 0;
 }
 
 .Calendar .calendar-week .outside-dates {

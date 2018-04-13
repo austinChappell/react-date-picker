@@ -7,7 +7,7 @@ import '../css/Calendar.css';
 
 const propTypes = {
   calendarMonthIndex: PropTypes.number.isRequired,
-  color: PropTypes.string,
+  color: PropTypes.string.isRequired,
   handleDateChange: PropTypes.func.isRequired,
   hoverWeek: PropTypes.bool,
   lightHeader: PropTypes.bool,
@@ -19,7 +19,6 @@ const propTypes = {
 };
 
 const defaultProps = {
-  color: '#005599',
   hoverWeek: false,
   lightHeader: false,
   startOfWeek: 0,
@@ -86,7 +85,7 @@ class Calendar extends Component {
         const diff = startBufferLength - (i + 1);
         const date = daysLastMonth - diff;
         day.month = 'previous';
-        day.date = String(date).padStart('0', 2);
+        day.date = String(date).padStart(2, '0');
       } else if (i >= dayDisplayMin) {
         const date = i - (dayDisplayMin - 1);
         day.month = 'next';
@@ -140,7 +139,6 @@ class Calendar extends Component {
     const currentDate = moment().add(this.props.calendarMonthIndex, 'months');
     const year = currentDate.format('YYYY');
     const month = currentDate.format('MMMM');
-    const monthAsNum = currentDate.format('MM');
     const week = this.genWeek();
     const today = moment().format('YYYY-MMMM-DD');
     const monthDates = this.genMonthDates(currentDate);
@@ -161,10 +159,12 @@ class Calendar extends Component {
             onClick={() => this.props.moveIndex(-1)}
             style={{
               float: 'left',
+              fontSize: '20px',
+              lineHeight: '14px',
               color: this.props.lightHeader ? 'white' : 'black',
             }}
           >
-            <FontAwesome name="chevron-left" />
+            {'<'}
           </button>
           <span>
             {`${month} ${year}`}
@@ -173,10 +173,12 @@ class Calendar extends Component {
             onClick={() => this.props.moveIndex(1)}
             style={{
               float: 'right',
+              fontSize: '20px',
+              lineHeight: '14px',
               color: this.props.lightHeader ? 'white' : 'black',
             }}
           >
-            <FontAwesome name="chevron-right" />
+            {'>'}
           </button>
         </div>
 
@@ -198,23 +200,37 @@ class Calendar extends Component {
               className={this.props.hoverWeek ? 'calendar-week hover-week' : 'calendar-week'}
             >
               {weekOfMonth.map((day, dayIndex) => {
-                const date = moment(`${year}-${monthAsNum}-${day.date}`).format('YYYY-MMMM-DD');
+                let monthAsNum = currentDate.format('MM');
+                const dateDisplay = `${year}-${monthAsNum}-${day.date}`;
+                const date = moment(dateDisplay).format('YYYY-MMMM-DD');
+
                 const isToday = date === today;
                 const isCurrentMonth = day.month === 'current';
+                const isPrevMonth = day.month === 'previous';
+                const isNextMonth = day.month === 'next';
+
                 let yearOfDay = year;
-                if (monthAsNum === '01' && day.month === 'previous') {
+
+                if (monthAsNum === '01' && isPrevMonth) {
                   yearOfDay = String(Number(year) - 1);
-                } else if (monthAsNum === '12' && day.month === 'next') {
+                  monthAsNum = '12';
+                } else if (monthAsNum === '12' && isNextMonth) {
                   yearOfDay = String(Number(year) + 1);
+                  monthAsNum = '01';
+                } else if (isPrevMonth) {
+                  monthAsNum = String(Number(monthAsNum) - 1).padStart(2, '0');
+                } else if (isNextMonth) {
+                  monthAsNum = String(Number(monthAsNum) + 1).padStart(2, '0');
                 }
 
                 const todayMarker = isToday ?
                   (
-                    <FontAwesome
+                    <span
                       className="today-marker"
-                      name="caret-right"
                       style={{ color: this.props.color }}
-                    />
+                    >
+                      &#9698;
+                    </span>
                   )
                   : null;
 
