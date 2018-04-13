@@ -20,7 +20,7 @@
   cursor: pointer;
 }
 
-.Calendar .calendar-week:hover {
+.Calendar .calendar-week.hover-week:hover {
   background-color: #eeeeee;
 }
 

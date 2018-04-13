@@ -83,6 +83,7 @@ class DatePicker extends Component {
           calendarMonthIndex={this.state.calendarMonthIndex}
           date={this.state.date}
           handleDateChange={this.handleDateChange}
+          hoverWeek
           lightHeader
           moveIndex={this.moveIndex}
           show={this.state.showCalendar}

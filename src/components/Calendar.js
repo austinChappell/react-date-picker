@@ -9,6 +9,7 @@ const propTypes = {
   calendarMonthIndex: PropTypes.number.isRequired,
   color: PropTypes.string,
   handleDateChange: PropTypes.func.isRequired,
+  hoverWeek: PropTypes.bool,
   lightHeader: PropTypes.bool,
   show: PropTypes.bool.isRequired,
   startOfWeek: PropTypes.number,
@@ -18,6 +19,7 @@ const propTypes = {
 
 const defaultProps = {
   color: '#005599',
+  hoverWeek: false,
   lightHeader: false,
   startOfWeek: 0,
   style: {},
@@ -192,7 +194,7 @@ class Calendar extends Component {
           {monthDates.map((weekOfMonth, weekIndex) => (
             <div
               key={weekIndex}
-              className="calendar-week"
+              className={this.props.hoverWeek ? 'calendar-week hover-week' : 'calendar-week'}
             >
               {weekOfMonth.map((day, dayIndex) => {
                 const date = moment(`${year}-${monthAsNum}-${day.date}`).format('YYYY-MMMM-DD');
