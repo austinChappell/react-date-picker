@@ -6,6 +6,7 @@ import FontAwesome from 'react-fontawesome';
 import '../css/Calendar.css';
 
 const propTypes = {
+  calendarMonthIndex: PropTypes.number.isRequired,
   color: PropTypes.string,
   handleDateChange: PropTypes.func.isRequired,
   lightHeader: PropTypes.bool,
@@ -28,10 +29,6 @@ const dayNames = [
 ];
 
 class Calendar extends Component {
-  state = {
-    calendarMonthIndex: 0,
-  }
-
   genWeek = () => {
     const days = [0, 1, 2, 3, 4, 5, 6];
     const startOfWeek = [];
@@ -47,10 +44,11 @@ class Calendar extends Component {
   }
 
   genMonthDates = (currentDate) => {
-    const date = new Date(currentDate);
-    const thisYear = date.getFullYear();
-    const thisMonth = date.getMonth();
-    const daysInMonth = moment().daysInMonth();
+    const dateParam = new Date(currentDate);
+    const thisYear = dateParam.getFullYear();
+    const thisMonth = dateParam.getMonth();
+    const daysInMonth = moment(dateParam).daysInMonth();
+    const daysLastMonth = moment(dateParam).subtract(1, 'month').daysInMonth();
     const firstDay = moment(new Date(thisYear, thisMonth, 1)).day();
 
     const dates = [];
@@ -70,41 +68,32 @@ class Calendar extends Component {
     const dayDisplayMin = startBufferLength + daysInMonth;
 
     // num days needed for next month
-    const endBufferLength = 7 - (dayDisplayMin % 7);
+    const monthRemainder = dayDisplayMin % 7;
+    const endBufferLength = monthRemainder > 0 ?
+      7 - (monthRemainder) : 0;
 
     const calendarTotal = dayDisplayMin + endBufferLength;
-
-    console.log('END BUFFER', endBufferLength);
 
     let dayCounter = 0;
     const calendarDisplay = [];
 
     for (let i = 0; i < calendarTotal; i += 1) {
+      const day = {};
       if (i < startBufferLength) {
-        const day = {
-          month: 'previous',
-        };
-        console.log('day', day);
-        calendarDisplay.push('');
+        const diff = startBufferLength - (i + 1);
+        const date = daysLastMonth - diff;
+        day.month = 'previous';
+        day.date = String(date).padStart('0', 2);
       } else if (i >= dayDisplayMin) {
-
-        // get day of next month
         const date = i - (dayDisplayMin - 1);
-        const day = {
-          month: 'next',
-          date: String(date).padStart(2, '0'),
-        };
-        console.log('day', day);
-        calendarDisplay.push('');
+        day.month = 'next';
+        day.date = String(date).padStart(2, '0');
       } else {
-        const day = {
-          month: 'current',
-          date: dates[dayCounter],
-        };
-        console.log('day', day);
-        calendarDisplay.push(dates[dayCounter]);
+        day.month = 'current';
+        day.date = dates[dayCounter];
         dayCounter += 1;
       }
+      calendarDisplay.push(day);
     }
 
     const weekCount = calendarDisplay.length / 7;
@@ -119,11 +108,6 @@ class Calendar extends Component {
     });
 
     return daysByWeek;
-  }
-
-  moveIndex = (diff) => {
-    const calendarMonthIndex = this.state.calendarMonthIndex + diff;
-    this.setState({ calendarMonthIndex });
   }
 
   render() {
@@ -150,7 +134,7 @@ class Calendar extends Component {
     const className = this.props.show ? 'Calendar' : 'hide';
 
     // get date info
-    const currentDate = moment().add(this.state.calendarMonthIndex, 'months');
+    const currentDate = moment().add(this.props.calendarMonthIndex, 'months');
     const year = currentDate.format('YYYY');
     const month = currentDate.format('MMMM');
     const monthAsNum = currentDate.format('MM');
@@ -171,7 +155,7 @@ class Calendar extends Component {
           }}
         >
           <button
-            onClick={() => this.moveIndex(-1)}
+            onClick={() => this.props.moveIndex(-1)}
             style={{
               float: 'left',
               color: this.props.lightHeader ? 'white' : 'black',
@@ -183,7 +167,7 @@ class Calendar extends Component {
             {`${month} ${year}`}
           </span>
           <button
-            onClick={() => this.moveIndex(1)}
+            onClick={() => this.props.moveIndex(1)}
             style={{
               float: 'right',
               color: this.props.lightHeader ? 'white' : 'black',
@@ -211,8 +195,15 @@ class Calendar extends Component {
               className="calendar-week"
             >
               {weekOfMonth.map((day, dayIndex) => {
-                const date = moment(`${year}-${monthAsNum}-${day}`).format('YYYY-MMMM-DD');
+                const date = moment(`${year}-${monthAsNum}-${day.date}`).format('YYYY-MMMM-DD');
                 const isToday = date === today;
+                const isCurrentMonth = day.month === 'current';
+                let yearOfDay = year;
+                if (monthAsNum === '01' && day.month === 'previous') {
+                  yearOfDay = String(Number(year) - 1);
+                } else if (monthAsNum === '12' && day.month === 'next') {
+                  yearOfDay = String(Number(year) + 1);
+                }
 
                 const todayMarker = isToday ?
                   (
@@ -224,13 +215,16 @@ class Calendar extends Component {
                   )
                   : null;
 
+                const dayClassName = isCurrentMonth ? 'current-month' : 'outside-dates';
+
                 return (
                   <span
                     key={dayIndex}
-                    onClick={() => this.props.handleDateChange(year, monthAsNum, day)}
+                    className={dayClassName}
+                    onClick={() => this.props.handleDateChange(yearOfDay, monthAsNum, day.date)}
                     style={colStyle}
                   >
-                    {day} {todayMarker}
+                    {day.date} {todayMarker}
                   </span>
                 );
               })}

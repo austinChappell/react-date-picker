@@ -40,6 +40,10 @@
   transform: rotate(45deg);
 }
 
+.Calendar .calendar-week .outside-dates {
+  color: #cccccc;
+}
+
 .hide {
   display: none;
 }

@@ -13,10 +13,29 @@ const defaultProps = {
 
 class DatePicker extends Component {
   state = {
+    calendarMonthIndex: 0,
     date: null,
     displayDate: '',
     showCalendar: false,
   };
+
+  componentDidMount() {
+    document.addEventListener('click', this.listenForClose);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.listenForClose);
+  }
+
+  bubbleEvent = (target) => {
+    if (target.classList.contains('DatePicker')) {
+      return;
+    } else if (target.tagName === 'HTML') {
+      this.setState({ showCalendar: false });
+    } else {
+      this.bubbleEvent(target.parentElement);
+    }
+  }
 
   handleChange = (evt) => {
     const displayDate = evt.target.value;
@@ -27,10 +46,21 @@ class DatePicker extends Component {
     const displayDate = `${year}-${month}-${day}`;
     const date = new Date(displayDate);
     this.setState({
+      calendarMonthIndex: 0,
       date,
       displayDate,
       showCalendar: false,
     });
+  }
+
+  listenForClose = (evt) => {
+    const { target } = evt;
+    this.bubbleEvent(target);
+  }
+
+  moveIndex = (diff) => {
+    const calendarMonthIndex = this.state.calendarMonthIndex + diff;
+    this.setState({ calendarMonthIndex });
   }
 
   showCalendar = () => {
@@ -39,7 +69,10 @@ class DatePicker extends Component {
 
   render() {
     return (
-      <div className="DatePicker">
+      <div
+        className="DatePicker"
+
+      >
         <input
           onChange={evt => this.handleChange(evt)}
           onFocus={this.showCalendar}
@@ -47,9 +80,11 @@ class DatePicker extends Component {
           value={this.state.displayDate}
         />
         <Calendar
+          calendarMonthIndex={this.state.calendarMonthIndex}
           date={this.state.date}
           handleDateChange={this.handleDateChange}
           lightHeader
+          moveIndex={this.moveIndex}
           show={this.state.showCalendar}
           startOfWeek={1}
         />
