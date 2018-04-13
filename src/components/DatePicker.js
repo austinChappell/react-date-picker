@@ -38,24 +38,8 @@ class DatePicker extends Component {
     showCalendar: false,
   };
 
-  componentDidMount() {
-    document.addEventListener('click', this.listenForClose);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('click', this.listenForClose);
-  }
-
-  bubbleEvent = (target) => {
-    const clickedInput = target.classList.contains('date-picker-input');
-    const clickedCalendar = target.classList.contains('Calendar');
-    if (!clickedInput && !clickedCalendar) {
-      if (target.tagName === 'HTML') {
-        this.setState({ activated: true, showCalendar: false });
-      } else {
-        this.bubbleEvent(target.parentElement);
-      }
-    }
+  closeCalendar = () => {
+    this.setState({ activated: true, showCalendar: false });
   }
 
   handleChange = (evt) => {
@@ -76,11 +60,6 @@ class DatePicker extends Component {
     });
   }
 
-  listenForClose = (evt) => {
-    const { target } = evt;
-    this.bubbleEvent(target);
-  }
-
   moveIndex = (diff) => {
     const calendarMonthIndex = this.state.calendarMonthIndex + diff;
     this.setState({ calendarMonthIndex });
@@ -89,10 +68,9 @@ class DatePicker extends Component {
   setMonthIndex = () => {
     const { date } = this.props;
     if (date) {
-      const month = date.getMonth()
+      const month = date.getMonth();
       const currentMonth = new Date().getMonth();
       const monthDiff = month - currentMonth;
-      // const monthDiff = moment().diff(moment(date), 'months');
       return monthDiff;
     }
     return 0;
@@ -165,6 +143,7 @@ class DatePicker extends Component {
       (
         <Calendar
           calendarMonthIndex={calendarMonthIndex}
+          closeCalendar={this.closeCalendar}
           color={color}
           date={date}
           handleDateChange={this.handleDateChange}

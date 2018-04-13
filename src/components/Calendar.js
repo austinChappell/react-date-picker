@@ -6,6 +6,7 @@ import '../css/Calendar.css';
 
 const propTypes = {
   calendarMonthIndex: PropTypes.number.isRequired,
+  closeCalendar: PropTypes.func.isRequired,
   color: PropTypes.string.isRequired,
   date: PropTypes.objectOf(PropTypes.any),
   handleDateChange: PropTypes.func.isRequired,
@@ -31,6 +32,26 @@ const dayNames = [
 ];
 
 class Calendar extends Component {
+  componentDidMount() {
+    document.addEventListener('click', this.listenForClose);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.listenForClose);
+  }
+
+  bubbleEvent = (target) => {
+    const clickedInput = target.classList.contains('date-picker-input');
+    const clickedCalendar = target.classList.contains('Calendar');
+    if (!clickedInput && !clickedCalendar) {
+      if (target.tagName === 'HTML') {
+        this.props.closeCalendar();
+      } else {
+        this.bubbleEvent(target.parentElement);
+      }
+    }
+  }
+
   genWeek = () => {
     const days = [0, 1, 2, 3, 4, 5, 6];
     const startOfWeek = [];
@@ -108,6 +129,11 @@ class Calendar extends Component {
     });
 
     return daysByWeek;
+  }
+
+  listenForClose = (evt) => {
+    const { target } = evt;
+    this.bubbleEvent(target);
   }
 
   render() {
