@@ -1,0 +1,45 @@
+.Calendar {
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.Calendar .header {
+  text-align: center;
+  padding: 5px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.Calendar .header button {
+  border: none;
+  cursor: pointer;
+  outline: none;
+  background-color: transparent;
+}
+
+.Calendar .calendar-dates {
+  cursor: pointer;
+}
+
+.Calendar .calendar-week:hover {
+  background-color: #eeeeee;
+}
+
+.Calendar .calendar-week span {
+  position: relative;
+}
+
+.Calendar .calendar-week span:hover {
+  background-color: #dddddd;
+}
+
+.Calendar .calendar-week .today-marker {
+  position: absolute;
+  bottom: 0;
+  right: 5px;
+  transform-origin: left;
+  transform: rotate(45deg);
+}
+
+.hide {
+  display: none;
+}
