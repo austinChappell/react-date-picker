@@ -11,6 +11,7 @@ const propTypes = {
   handleDateChange: PropTypes.func.isRequired,
   hoverWeek: PropTypes.bool,
   lightHeader: PropTypes.bool,
+  moveIndex: PropTypes.func.isRequired,
   show: PropTypes.bool.isRequired,
   startOfWeek: PropTypes.number,
   style: PropTypes.objectOf(PropTypes.any),
