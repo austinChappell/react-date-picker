@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 import Calendar from './Calendar';
 
@@ -68,9 +69,7 @@ class DatePicker extends Component {
   setMonthIndex = () => {
     const { date } = this.props;
     if (date) {
-      const month = date.getMonth();
-      const currentMonth = new Date().getMonth();
-      const monthDiff = month - currentMonth;
+      const monthDiff = moment(date).diff(moment(), 'months');
       return monthDiff;
     }
     return 0;

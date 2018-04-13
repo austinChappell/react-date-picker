@@ -22,9 +22,9 @@ class App extends Component {
           // forceError
           handleDateChange={this.handleDateChange}
           hoverWeek
-          // inputStyle={{
-          //   padding: 0,
-          // }}
+          inputStyle={{
+            borderRadius: 0,
+          }}
           lightHeader
           placeholder="Select Date"
           required
