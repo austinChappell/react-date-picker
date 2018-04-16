@@ -14,6 +14,7 @@ const propTypes = {
   handleDateChange: PropTypes.func.isRequired,
   hoverWeek: PropTypes.bool,
   inputStyle: PropTypes.objectOf(PropTypes.any),
+  keepOpen: PropTypes.bool,
   lightHeader: PropTypes.bool,
   placeholder: PropTypes.string,
   range: PropTypes.bool,
@@ -29,6 +30,7 @@ const defaultProps = {
   forceError: false,
   hoverWeek: false,
   inputStyle: {},
+  keepOpen: false,
   lightHeader: false,
   placeholder: 'Date',
   range: false,
@@ -53,16 +55,44 @@ class DatePicker extends Component {
   };
 
   handleDateChange = (year, month, day) => {
-    const displayDate = `${month}/${day}/${year}`;
-    const date = new Date(displayDate);
-    this.setState({
-      activated: true,
-      calendarMonthIndex: 0,
-      displayDate,
-      showCalendar: false,
-    }, () => {
-      this.props.handleDateChange(date);
-    });
+    // only set one date
+    if (!this.props.range) {
+      const displayDate = `${month}/${day}/${year}`;
+      const date = new Date(displayDate);
+      this.setState({
+        activated: true,
+        calendarMonthIndex: 0,
+        displayDate,
+        showCalendar: false,
+      }, () => {
+        this.props.handleDateChange(date);
+      });
+      // set the start date or change start date and erase end date
+    } else if ((this.props.date && this.props.endDate) || !this.props.date) {
+      const displayDate = `${month}/${day}/${year}`;
+      const date = new Date(displayDate);
+      this.setState({
+        activated: true,
+        displayDate,
+      }, () => {
+        this.props.handleDateChange([date, null]);
+      });
+      // set the end date
+    } else {
+      const startDisplay = this.state.displayDate;
+      const endDisplay = `${month}/${day}/${year}`;
+      const displayDate = `${startDisplay} - ${endDisplay}`;
+      const startDate = new Date(startDisplay);
+      const endDate = new Date(endDisplay);
+      this.setState({
+        activated: true,
+        calendarMonthIndex: 0,
+        displayDate,
+        showCalendar: false,
+      }, () => {
+        this.props.handleDateChange([startDate, endDate]);
+      });
+    }
   }
 
   moveIndex = (diff) => {
@@ -98,6 +128,7 @@ class DatePicker extends Component {
       hoverWeek,
       inputStyle,
       lightHeader,
+      keepOpen,
       placeholder,
       range,
       required,
@@ -110,9 +141,19 @@ class DatePicker extends Component {
       showCalendar,
     } = this.state;
 
-    const stringDate = JSON.stringify(new Date(displayDate));
-    const error = stringDate === 'null' && activated && required;
-    const hasForceError = stringDate === 'null' && forceError && required;
+    // split dates of multiple dates
+    const dates = displayDate.split(' - ');
+    let error = false;
+    let hasForceError = false;
+    dates.forEach((dateObj) => {
+      const stringDate = JSON.stringify(new Date(dateObj));
+      if (stringDate === 'null' && activated && required) {
+        error = true;
+      }
+      if (stringDate === 'null' && forceError && required) {
+        hasForceError = true;
+      }
+    });
     const errorFound = error || hasForceError;
 
     const errorStyle = {
@@ -135,6 +176,7 @@ class DatePicker extends Component {
     const defaultInputStyle = {
       border: '1px solid black',
       borderRadius: 4,
+      minWidth: range ? 150 : 0,
       outline: 'none',
       padding: 5,
     };
@@ -144,7 +186,7 @@ class DatePicker extends Component {
       Object.assign({}, mergedInputStyle, errorStyle)
       : mergedInputStyle;
 
-    const calendar = showCalendar ?
+    const calendar = showCalendar || keepOpen ?
       (
         <Calendar
           calendarMonthIndex={calendarMonthIndex}

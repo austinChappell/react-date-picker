@@ -114,6 +114,7 @@ class MonthDates extends Component {
                 : null;
 
               const additionalStyle = {};
+              let secondaryHover = false;
 
               if (isSelected || endDateSelected) {
                 additionalStyle.backgroundColor = color;
@@ -127,17 +128,36 @@ class MonthDates extends Component {
               const activeWeek = weekIndex === activeWeekIndex;
               const active = activeDay && activeWeek;
 
+              if (range && selectedDate && !endDate) {
+                const diff = moment(dateDisplay).diff(moment(selectedDate), 'days');
+                const presentWeek = weekIndex === activeWeekIndex;
+                const futureWeek = weekIndex < activeWeekIndex;
+                const futureDay = dayIndex < activeDayIndex;
+                const isFuture = (presentWeek && futureDay) || futureWeek;
+                if (diff > 0 && isFuture) {
+                  secondaryHover = true;
+                }
+              } else if (range && selectedDate && endDate) {
+                const rangeDiff = moment(endDate).diff(moment(selectedDate), 'days');
+                const diff = moment(dateDisplay).diff(moment(selectedDate), 'days');
+                if (diff > 0 && diff < rangeDiff) {
+                  secondaryHover = true;
+                }
+              } else if (activeWeek && hoverWeek) {
+                secondaryHover = true;
+              }
+
               return (
                 <Day
                   key={dayIndex}
                   active={active}
-                  activeWeek={activeWeek && hoverWeek}
                   day={day}
                   dayIndex={dayIndex}
                   dayStyle={dayStyle}
                   handleDateChange={handleDateChange}
                   handleHover={this.handleHover}
                   monthAsNum={monthAsNum}
+                  secondaryHover={secondaryHover}
                   todayMarker={todayMarker}
                   weekIndex={weekIndex}
                   yearOfDay={yearOfDay}

@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 
 const propTypes = {
   active: PropTypes.bool.isRequired,
-  activeWeek: PropTypes.bool.isRequired,
   day: PropTypes.objectOf(PropTypes.any).isRequired,
   dayIndex: PropTypes.number.isRequired,
   dayStyle: PropTypes.objectOf(PropTypes.any).isRequired,
   handleDateChange: PropTypes.func.isRequired,
   handleHover: PropTypes.func.isRequired,
   monthAsNum: PropTypes.string.isRequired,
+  secondaryHover: PropTypes.bool.isRequired,
   todayMarker: PropTypes.objectOf(PropTypes.any),
   weekIndex: PropTypes.number.isRequired,
   yearOfDay: PropTypes.string.isRequired,
@@ -22,7 +22,7 @@ const defaultProps = {
 const Day = (props) => {
   const {
     active,
-    activeWeek,
+    secondaryHover,
     day,
     dayIndex,
     dayStyle,
@@ -38,16 +38,16 @@ const Day = (props) => {
     backgroundColor: active ? '#cccccc' : '#ffffff',
   };
 
-  const activeWeekStyle = {
-    backgroundColor: activeWeek ? '#dddddd' : '#ffffff',
+  const secondaryHoverStyle = {
+    backgroundColor: secondaryHover ? '#dddddd' : '#ffffff',
   };
 
   let activeStyle;
 
   if (active) {
     activeStyle = activeDayStyle;
-  } else if (activeWeek) {
-    activeStyle = activeWeekStyle;
+  } else if (secondaryHover) {
+    activeStyle = secondaryHoverStyle;
   } else {
     activeStyle = {};
   }

@@ -8,8 +8,17 @@ class App extends Component {
     endDate: null,
   }
 
-  handleDateChange = (date) => {
-    this.setState({ date });
+  // use this for single date
+  // handleDateChange = (date) => {
+  //   this.setState({ date });
+  // }
+
+  // use this for range dates
+  handleDateChange = ([date, endDate]) => {
+    this.setState({
+      date,
+      endDate,
+    });
   }
 
   render() {
@@ -27,6 +36,7 @@ class App extends Component {
           inputStyle={{
             borderRadius: 0,
           }}
+          // keepOpen
           lightHeader
           placeholder="Select Date"
           range
