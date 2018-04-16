@@ -21,7 +21,7 @@ class App extends Component {
           // errorMessage="This is the error message"
           // forceError
           handleDateChange={this.handleDateChange}
-          hoverWeek
+          // hoverWeek
           inputStyle={{
             borderRadius: 0,
           }}

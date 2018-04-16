@@ -23,15 +23,22 @@ const CalendarHeader = (props) => {
       style={{
         backgroundColor: color,
         color: lightHeader ? 'white' : 'black',
+        textAlign: 'center',
+        padding: '15px 5px',
+        borderBottom: '1px solid #eeeeee',
       }}
     >
       <button
         onClick={() => moveIndex(-1)}
         style={{
+          backgroundColor: 'transparent',
+          border: 'none',
+          color: lightHeader ? 'white' : 'black',
+          cursor: 'pointer',
           float: 'left',
           fontSize: '20px',
           lineHeight: '14px',
-          color: lightHeader ? 'white' : 'black',
+          outline: 'none',
         }}
       >
         {'<'}
@@ -42,10 +49,14 @@ const CalendarHeader = (props) => {
       <button
         onClick={() => moveIndex(1)}
         style={{
+          backgroundColor: 'transparent',
+          border: 'none',
+          color: lightHeader ? 'white' : 'black',
+          cursor: 'pointer',
           float: 'right',
           fontSize: '20px',
           lineHeight: '14px',
-          color: lightHeader ? 'white' : 'black',
+          outline: 'none',
         }}
       >
         {'>'}

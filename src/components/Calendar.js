@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import '../css/Calendar.css';
 import CalendarHeader from './CalendarHeader';
 import DayHeader from './DayHeader';
 import MonthDates from './MonthDates';
@@ -154,8 +153,11 @@ class Calendar extends Component {
 
     // calendar default style
     const defaultStyle = {
+      backgroundColor: '#ffffff',
       boxShadow: '1px 1px 5px gray',
+      position: 'absolute',
       width,
+      zIndex: 1000,
     };
 
     // calendar wrapper style merged with props
@@ -168,6 +170,7 @@ class Calendar extends Component {
       boxSizing: 'border-box',
       display: 'inline-block',
       padding: 10,
+      position: 'relative',
       textAlign: 'center',
       width: colWidth,
     };

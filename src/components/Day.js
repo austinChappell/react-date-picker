@@ -5,7 +5,6 @@ const propTypes = {
   active: PropTypes.bool.isRequired,
   activeWeek: PropTypes.bool.isRequired,
   day: PropTypes.objectOf(PropTypes.any).isRequired,
-  dayClassName: PropTypes.string.isRequired,
   dayIndex: PropTypes.number.isRequired,
   dayStyle: PropTypes.objectOf(PropTypes.any).isRequired,
   handleDateChange: PropTypes.func.isRequired,
@@ -25,7 +24,6 @@ const Day = (props) => {
     active,
     activeWeek,
     day,
-    dayClassName,
     dayIndex,
     dayStyle,
     handleDateChange,
@@ -58,7 +56,6 @@ const Day = (props) => {
   return (
     <span
       key={dayIndex}
-      className={dayClassName}
       onClick={() => handleDateChange(yearOfDay, monthAsNum, day.date)}
       onMouseEnter={() => handleHover(dayIndex, weekIndex)}
       style={style}

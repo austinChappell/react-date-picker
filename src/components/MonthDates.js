@@ -56,6 +56,10 @@ class MonthDates extends Component {
       <div
         className="calendar-dates"
         onMouseLeave={() => this.handleHover(null, null)}
+        style={{
+          cursor: 'pointer',
+          fontWeight: 200,
+        }}
       >
         {monthDates.map((weekOfMonth, weekIndex) => (
           <div
@@ -91,21 +95,28 @@ class MonthDates extends Component {
               const todayMarker = isToday ?
                 (
                   <span
-                    className="today-marker"
-                    style={{ color }}
+                    style={{
+                      bottom: 0,
+                      color,
+                      position: 'absolute',
+                      right: 0,
+                    }}
                   >
                     &#9698;
                   </span>
                 )
                 : null;
 
-              const dayClassName = isCurrentMonth ? 'current-month' : 'outside-dates';
-              const selectedStyle = isSelected ? {
-                backgroundColor: color,
-                color: lightHeader ? 'white' : 'black',
-              } : {};
+              const additionalStyle = {};
 
-              const dayStyle = Object.assign({}, colStyle, selectedStyle);
+              if (isSelected) {
+                additionalStyle.backgroundColor = color;
+                additionalStyle.color = lightHeader ? 'white' : 'black';
+              } else if (!isCurrentMonth) {
+                additionalStyle.color = '#cccccc';
+              }
+
+              const dayStyle = Object.assign({}, colStyle, additionalStyle);
               const activeDay = dayIndex === activeDayIndex;
               const activeWeek = weekIndex === activeWeekIndex;
               const active = activeDay && activeWeek;
@@ -116,7 +127,6 @@ class MonthDates extends Component {
                   active={active}
                   activeWeek={activeWeek && hoverWeek}
                   day={day}
-                  dayClassName={dayClassName}
                   dayIndex={dayIndex}
                   dayStyle={dayStyle}
                   handleDateChange={handleDateChange}
@@ -133,7 +143,7 @@ class MonthDates extends Component {
       </div>
     );
   }
-};
+}
 
 MonthDates.propTypes = propTypes;
 MonthDates.defaultProps = defaultProps;

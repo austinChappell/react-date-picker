@@ -7,18 +7,21 @@ const propTypes = {
   week: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
-const DayHeader = ({ colStyle, dayNames, week }) => (
-  <div className="day-header">
-    {week.map((dayIndex, index) => (
-      <span
-        key={index}
-        style={colStyle}
-      >
-        {dayNames[dayIndex]}
-      </span>
-    ))}
-  </div>
-);
+const DayHeader = ({ colStyle, dayNames, week }) => {
+  const style = Object.assign({}, colStyle, { fontWeight: 600 });
+  return (
+    <div className="day-header">
+      {week.map((dayIndex, index) => (
+        <span
+          key={index}
+          style={style}
+        >
+          {dayNames[dayIndex]}
+        </span>
+      ))}
+    </div>
+  );
+};
 
 DayHeader.propTypes = propTypes;
 
