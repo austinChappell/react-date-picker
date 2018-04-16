@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Day from './Day';
@@ -20,90 +20,119 @@ const defaultProps = {
   selectedDate: null,
 };
 
-const MonthDates = (props) => {
-  const {
-    color,
-    colStyle,
-    currentDate,
-    handleDateChange,
-    hoverWeek,
-    lightHeader,
-    monthDates,
-    selectedDate,
-    today,
-    year,
-  } = props;
+class MonthDates extends Component {
+  state = {
+    activeWeekIndex: null,
+    activeDayIndex: null,
+  }
 
-  return (
-    <div className="calendar-dates">
-      {monthDates.map((weekOfMonth, weekIndex) => (
-        <div
-          key={weekIndex}
-          className={hoverWeek ? 'calendar-week hover-week' : 'calendar-week'}
-        >
-          {weekOfMonth.map((day, dayIndex) => {
-            let monthAsNum = currentDate.format('MM');
-            let yearOfDay = year;
+  handleHover = (dayIndex, weekIndex) => {
+    this.setState({
+      activeDayIndex: dayIndex,
+      activeWeekIndex: weekIndex,
+    });
+  }
 
-            const isCurrentMonth = day.month === 'current';
-            const isPrevMonth = day.month === 'previous';
-            const isNextMonth = day.month === 'next';
+  render() {
+    const {
+      color,
+      colStyle,
+      currentDate,
+      handleDateChange,
+      hoverWeek,
+      lightHeader,
+      monthDates,
+      selectedDate,
+      today,
+      year,
+    } = this.props;
 
-            if (monthAsNum === '01' && isPrevMonth) {
-              yearOfDay = String(Number(year) - 1);
-              monthAsNum = '12';
-            } else if (monthAsNum === '12' && isNextMonth) {
-              yearOfDay = String(Number(year) + 1);
-              monthAsNum = '01';
-            } else if (isPrevMonth) {
-              monthAsNum = String(Number(monthAsNum) - 1).padStart(2, '0');
-            } else if (isNextMonth) {
-              monthAsNum = String(Number(monthAsNum) + 1).padStart(2, '0');
-            }
+    const {
+      activeDayIndex,
+      activeWeekIndex,
+    } = this.state;
 
-            const dateDisplay = `${year}-${monthAsNum}-${day.date}`;
-            const selectedDateDisplay = moment(selectedDate).format('YYYY-MM-DD');
-            const dateValid = JSON.stringify(new Date(dateDisplay)) !== 'null';
+    return (
+      <div
+        className="calendar-dates"
+        onMouseLeave={() => this.handleHover(null, null)}
+      >
+        {monthDates.map((weekOfMonth, weekIndex) => (
+          <div
+            key={weekIndex}
+            className={hoverWeek ? 'calendar-week hover-week' : 'calendar-week'}
+          >
+            {weekOfMonth.map((day, dayIndex) => {
+              let monthAsNum = currentDate.format('MM');
+              let yearOfDay = year;
 
-            const isSelected = dateDisplay === selectedDateDisplay && dateValid;
-            const isToday = dateDisplay === today;
-            const todayMarker = isToday ?
-              (
-                <span
-                  className="today-marker"
-                  style={{ color }}
-                >
-                  &#9698;
-                </span>
-              )
-              : null;
+              const isCurrentMonth = day.month === 'current';
+              const isPrevMonth = day.month === 'previous';
+              const isNextMonth = day.month === 'next';
 
-            const dayClassName = isCurrentMonth ? 'current-month' : 'outside-dates';
-            const selectedStyle = isSelected ? {
-              backgroundColor: color,
-              color: lightHeader ? 'white' : 'black',
-            } : {};
+              if (monthAsNum === '01' && isPrevMonth) {
+                yearOfDay = String(Number(year) - 1);
+                monthAsNum = '12';
+              } else if (monthAsNum === '12' && isNextMonth) {
+                yearOfDay = String(Number(year) + 1);
+                monthAsNum = '01';
+              } else if (isPrevMonth) {
+                monthAsNum = String(Number(monthAsNum) - 1).padStart(2, '0');
+              } else if (isNextMonth) {
+                monthAsNum = String(Number(monthAsNum) + 1).padStart(2, '0');
+              }
 
-            const dayStyle = Object.assign({}, colStyle, selectedStyle);
+              const dateDisplay = `${year}-${monthAsNum}-${day.date}`;
+              const selectedDateDisplay = moment(selectedDate).format('YYYY-MM-DD');
+              const dateValid = JSON.stringify(new Date(dateDisplay)) !== 'null';
 
-            return (
-              <Day
-                key={dayIndex}
-                day={day}
-                dayClassName={dayClassName}
-                dayIndex={dayIndex}
-                dayStyle={dayStyle}
-                handleDateChange={handleDateChange}
-                monthAsNum={monthAsNum}
-                todayMarker={todayMarker}
-                yearOfDay={yearOfDay}
-              />
-            );
-          })}
-        </div>
-      ))}
-    </div>
-  );
+              const isSelected = dateDisplay === selectedDateDisplay && dateValid;
+              const isToday = dateDisplay === today;
+              const todayMarker = isToday ?
+                (
+                  <span
+                    className="today-marker"
+                    style={{ color }}
+                  >
+                    &#9698;
+                  </span>
+                )
+                : null;
+
+              const dayClassName = isCurrentMonth ? 'current-month' : 'outside-dates';
+              const selectedStyle = isSelected ? {
+                backgroundColor: color,
+                color: lightHeader ? 'white' : 'black',
+              } : {};
+
+              const dayStyle = Object.assign({}, colStyle, selectedStyle);
+              const activeDay = dayIndex === activeDayIndex;
+              const activeWeek = weekIndex === activeWeekIndex;
+              const active = activeDay && activeWeek;
+
+              return (
+                <Day
+                  key={dayIndex}
+                  active={active}
+                  activeWeek={activeWeek && hoverWeek}
+                  day={day}
+                  dayClassName={dayClassName}
+                  dayIndex={dayIndex}
+                  dayStyle={dayStyle}
+                  handleDateChange={handleDateChange}
+                  handleHover={this.handleHover}
+                  monthAsNum={monthAsNum}
+                  todayMarker={todayMarker}
+                  weekIndex={weekIndex}
+                  yearOfDay={yearOfDay}
+                />
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    );
+  }
 };
 
 MonthDates.propTypes = propTypes;

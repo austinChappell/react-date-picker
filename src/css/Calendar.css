@@ -27,16 +27,8 @@
   font-weight: 200;
 }
 
-.Calendar .calendar-week.hover-week:hover {
-  background-color: #eeeeee;
-}
-
 .Calendar .calendar-week span {
   position: relative;
-}
-
-.Calendar .calendar-week span:hover {
-  background-color: #dddddd;
 }
 
 .Calendar .calendar-week .today-marker {
