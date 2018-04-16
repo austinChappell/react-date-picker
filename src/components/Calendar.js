@@ -11,10 +11,12 @@ const propTypes = {
   closeCalendar: PropTypes.func.isRequired,
   color: PropTypes.string.isRequired,
   date: PropTypes.objectOf(PropTypes.any),
+  endDate: PropTypes.objectOf(PropTypes.any),
   handleDateChange: PropTypes.func.isRequired,
   hoverWeek: PropTypes.bool,
   lightHeader: PropTypes.bool,
   moveIndex: PropTypes.func.isRequired,
+  range: PropTypes.bool.isRequired,
   startOfWeek: PropTypes.number,
   style: PropTypes.objectOf(PropTypes.any),
   width: PropTypes.number,
@@ -143,10 +145,12 @@ class Calendar extends Component {
       calendarMonthIndex,
       color,
       date: selectedDate,
+      endDate,
       handleDateChange,
       hoverWeek,
       lightHeader,
       moveIndex,
+      range,
       style,
       width,
     } = this.props;
@@ -207,10 +211,12 @@ class Calendar extends Component {
           color={color}
           colStyle={colStyle}
           currentDate={currentDate}
+          endDate={endDate}
           handleDateChange={handleDateChange}
           hoverWeek={hoverWeek}
           lightHeader={lightHeader}
           monthDates={monthDates}
+          range={range}
           selectedDate={selectedDate}
           today={today}
           year={year}

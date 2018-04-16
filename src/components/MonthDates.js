@@ -7,10 +7,12 @@ const propTypes = {
   color: PropTypes.string.isRequired,
   colStyle: PropTypes.objectOf(PropTypes.any).isRequired,
   currentDate: PropTypes.objectOf(PropTypes.any).isRequired,
+  endDate: PropTypes.objectOf(PropTypes.any),
   handleDateChange: PropTypes.func.isRequired,
   hoverWeek: PropTypes.bool.isRequired,
   lightHeader: PropTypes.bool.isRequired,
   monthDates: PropTypes.arrayOf(PropTypes.array).isRequired,
+  range: PropTypes.bool.isRequired,
   selectedDate: PropTypes.objectOf(PropTypes.any),
   today: PropTypes.string.isRequired,
   year: PropTypes.string.isRequired,
@@ -38,10 +40,12 @@ class MonthDates extends Component {
       color,
       colStyle,
       currentDate,
+      endDate,
       handleDateChange,
       hoverWeek,
       lightHeader,
       monthDates,
+      range,
       selectedDate,
       today,
       year,
@@ -88,9 +92,11 @@ class MonthDates extends Component {
 
               const dateDisplay = `${year}-${monthAsNum}-${day.date}`;
               const selectedDateDisplay = moment(selectedDate).format('YYYY-MM-DD');
+              const endDateDisplay = moment(endDate).format('YYYY-MM-DD');
               const dateValid = JSON.stringify(new Date(dateDisplay)) !== 'null';
 
               const isSelected = dateDisplay === selectedDateDisplay && dateValid;
+              const endDateSelected = dateDisplay === endDateDisplay && dateValid;
               const isToday = dateDisplay === today;
               const todayMarker = isToday ?
                 (
@@ -109,7 +115,7 @@ class MonthDates extends Component {
 
               const additionalStyle = {};
 
-              if (isSelected) {
+              if (isSelected || endDateSelected) {
                 additionalStyle.backgroundColor = color;
                 additionalStyle.color = lightHeader ? 'white' : 'black';
               } else if (!isCurrentMonth) {

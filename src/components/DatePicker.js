@@ -7,6 +7,7 @@ import Calendar from './Calendar';
 const propTypes = {
   color: PropTypes.string,
   date: PropTypes.objectOf(PropTypes.any),
+  endDate: PropTypes.objectOf(PropTypes.any),
   errorColor: PropTypes.string,
   errorMessage: PropTypes.string,
   forceError: PropTypes.bool,
@@ -15,12 +16,14 @@ const propTypes = {
   inputStyle: PropTypes.objectOf(PropTypes.any),
   lightHeader: PropTypes.bool,
   placeholder: PropTypes.string,
+  range: PropTypes.bool,
   required: PropTypes.bool,
 };
 
 const defaultProps = {
   color: '#005599',
   date: null,
+  endDate: null,
   errorColor: '#ff0000',
   errorMessage: 'Invalid Date',
   forceError: false,
@@ -28,6 +31,7 @@ const defaultProps = {
   inputStyle: {},
   lightHeader: false,
   placeholder: 'Date',
+  range: false,
   required: false,
 };
 
@@ -87,6 +91,7 @@ class DatePicker extends Component {
     const {
       color,
       date,
+      endDate,
       errorColor,
       errorMessage,
       forceError,
@@ -94,6 +99,7 @@ class DatePicker extends Component {
       inputStyle,
       lightHeader,
       placeholder,
+      range,
       required,
     } = this.props;
 
@@ -145,10 +151,12 @@ class DatePicker extends Component {
           closeCalendar={this.closeCalendar}
           color={color}
           date={date}
+          endDate={endDate}
           handleDateChange={this.handleDateChange}
           hoverWeek={hoverWeek}
           lightHeader={lightHeader}
           moveIndex={this.moveIndex}
+          range={range}
           startOfWeek={1}
         />
       )

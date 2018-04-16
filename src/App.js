@@ -5,6 +5,7 @@ import DatePicker from './components/DatePicker';
 class App extends Component {
   state = {
     date: null,
+    endDate: null,
   }
 
   handleDateChange = (date) => {
@@ -17,6 +18,7 @@ class App extends Component {
         <DatePicker
           // color="#ff0000"
           date={this.state.date}
+          endDate={this.state.endDate}
           // errorColor="#00ff00"
           // errorMessage="This is the error message"
           // forceError
@@ -27,6 +29,7 @@ class App extends Component {
           }}
           lightHeader
           placeholder="Select Date"
+          range
           required
         />
       </div>
